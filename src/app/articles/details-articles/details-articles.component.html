@@ -1,1 +1,4 @@
-<p>details-articles works!</p>
+<div *ngFor=" let article of articles">
+    <h2>{{ article.userId }}</h2>
+    <p>{{ article.body }}</p>
+  </div>
