@@ -1,4 +1,12 @@
-<div *ngFor=" let article of articles">
-    <h2>{{ article.userId }}</h2>
+<!-- article-details.component.html -->
+<div class="container">
+  <h2>Détails de l'article</h2>
+  <div *ngIf="article">
+    <h3>Titre:{{ article.title }}</h3>
     <p>{{ article.body }}</p>
+    <button [routerLink]="['/articles']" type="button">retour</button>
   </div>
+
+</div>
+
+

@@ -9,7 +9,13 @@ interface Comment {
 }
 @Component({
   selector: 'app-comment',
-  templateUrl: './comment.component.html',
+  templateUrl: `
+  <div *ngFor="let comment of comments">
+    <h2>{{ comment.name }}</h2>
+    <p>{{ comment.body }}</p>
+  </div>
+`,
+  
   styleUrls: ['./comment.component.css']
 })
 export class CommentComponent implements OnInit{
@@ -17,7 +23,10 @@ export class CommentComponent implements OnInit{
 comments:any
 
 constructor(private route: ActivatedRoute, private commentService: CommentsService) { }
-
+getCommentsByPostId(postId: number) {
+  this.commentService.getCommentsByPostId(postId)
+    .subscribe(response => this.comments = response);
+}
 ngOnInit() {
 
    // on recupere ici les comments
