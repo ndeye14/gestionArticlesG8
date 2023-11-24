@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ArticlesService implements OnInit{
   private apiUrl = 'https://jsonplaceholder.typicode.com/posts';
+  private itemsPerPage = 9; // Nombre d'articles par page
     articles: any[] = [];
   constructor(private http: HttpClient) { }
 
@@ -35,16 +36,38 @@ export class ArticlesService implements OnInit{
   addArticle(article: any): Observable<any> {
     return this.http.post(this.apiUrl, article);
   }
-// supprimer aticle
-  deleteArticle(id: number): Observable<any> {
-    const url = `${this.apiUrl}/${id}`;
-    return this.http.delete(url);
-  }
+
   ajouterArticle(article: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, article);
   }
 
 
+  supprimerArticle(id: number): Observable<any> {
+    const urlArticle = `${this.apiUrl}/${id}`;
+    return this.http.delete(urlArticle);
+  }
+
+   // Méthode de mise à jour d'un article
+  updateArticle(articleId: number, updatedArticle: any): Observable<any> {
+    const url = `${this.apiUrl}/${articleId}`;
+    return this.http.put(url, updatedArticle);
+  }
+
+  // Méthode pour rechercher des articles par titre
+  searchArticlesByTitle(keyword: string): Observable<any[]> {
+    const url = `${this.apiUrl}?title=${keyword}`;
+    return this.http.get<any[]>(url);
+  }
+
+
+
+
+  // Méthode pour récupérer les articles paginés
+  // getPaginatedArticles(page: number): Observable<any[]> {
+  //   const startIndex = (page - 1) * this.itemsPerPage;
+  //   const url = `${this.apiUrl}?_start=${startIndex}&_limit=${this.itemsPerPage}`;
+  //   return this.http.get<any[]>(url);
+  // }
 
 
 
