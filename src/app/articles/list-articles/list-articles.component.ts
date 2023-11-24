@@ -2,11 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { UsersService } from 'src/app/services/users/users.service';
 import { CommentsService } from 'src/app/services/comments/comments.service';
 import { ArticlesService } from 'src/app/services/articles/articles.service';
+import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-list-articles',
   templateUrl: './list-articles.component.html',
   styleUrls: ['./list-articles.component.css']
 })
+
 export class ListArticlesComponent implements OnInit {
   article: any = {
     id: 1,
@@ -15,35 +18,40 @@ export class ListArticlesComponent implements OnInit {
   };
   
   articles: any[] = [];
-  isAjoutModalOuvert = false;
+  pageActuelle: number = 1;
+  private itemsPerPage = 9; // Nombre d'articles par page
+  searchTerm: string = '';
+  articleId: number = 0;
+  currentArticle:any []=[];
+
+  filteredArticles: any[] = [];
    newArticle: any = {
     body: '',
     userId: 1 // ID de l'utilisateur (vous pouvez ajuster selon vos besoins)
   };
 
-  constructor(private userService: UsersService,
+  constructor(private http: HttpClient,private route: ActivatedRoute,
     private commentService: CommentsService,
     private articleService: ArticlesService) { }
-    updateArticle() {
-      this.articleService.updateArticle(this.article)
-        .subscribe(response => console.log(response));
-    }
-    currentArticle:any
+
+
   ngOnInit(): void {
-    // Chargez la liste des articles au démarrage du composant
-    this.loadArticles();
+    this.route.params.subscribe((params) => {
+      this.articleId = params['id'];
+      this.loadArticleDetails();
+    });
     this.articleService.getArticles().subscribe(data => {
       this.articles = data;
+      this.filteredArticles = data;
       console.log(this.articles); // Vérifiez la console pour vous assurer que les articles sont récupérés
     });
     
   }
-  loadArticles() {
-    this.articleService.getArticles().subscribe((data) => {
+  loadArticleDetails(): void {
+    this.articleService.getArticleById(this.articleId).subscribe((data) => {
       this.articles = data;
     });
   }
-  
    //  on recupre ici les articles
   //   this.articleService.getArticles().subscribe((data: any) => {
   //     this.articles = data;
@@ -70,8 +78,12 @@ export class ListArticlesComponent implements OnInit {
 
     this.articleService.ajouterArticle(this.newArticle).subscribe((response: any) => {
       console.log('Réponse du service après ajout d\'article :', response);
-      
-      this.articles.push(response);
+      // ajouter un articlea la fin
+      // this.articles.push(response);
+
+      // ajouter un article au debut
+      this.articles.unshift(response);
+
       console.log(this.articles)
 
       // this.fermerAjoutModal(); // Fermer le modal
@@ -81,22 +93,8 @@ export class ListArticlesComponent implements OnInit {
     });
 
     // Afficher les valeurs pour le débogage
-    console.log('Valeurs après ajout :', titreTemporaire, contenuTemporaire);
-  }
-    changeArticle(paramArticle:any){
-      this. newArticle = paramArticle;
-      this.newArticle.title =  paramArticle.title
-      this.newArticle.body= paramArticle.body;
-      console.log(this.newArticle.title);
-   
-      
-    }
-    modifierArticle(){
-      
-    }
-    
-
-    // this.currentArticles.item.title = this.item.title
+    // console.log('Valeurs après ajout :', titreTemporaire, contenuTemporaire);
   }
 
 
+}
